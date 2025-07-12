@@ -1,0 +1,23 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "myapp",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sriharsha390/Forkify.git"
+  },
+  "author": "harsha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sriharsha390/Forkify/issues"
+  },
+  "homepage": "https://github.com/sriharsha390/Forkify#readme",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.15.4",
+    "parcel": "^2.15.4"
+  }
+}
