@@ -1,4 +1,6 @@
 import icons from 'url:../img/icons.svg';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 const recipeContainer = document.querySelector('.recipe');
 
 const timeout = function (s) {
@@ -69,7 +71,7 @@ searchForm.addEventListener('submit', async function (e) {
     recipes.forEach(r => {
       const html = `
       <li class="preview">
-            <a class="preview__link preview__link--active" href="${r.id}">
+            <a class="preview__link preview__link--active" href="#${r.id}">
               <figure class="preview__fig">
                 <img src=${r.image_url} alt="Test" />
               </figure>
@@ -85,8 +87,10 @@ searchForm.addEventListener('submit', async function (e) {
             </a>
           </li>
       `;
+
       results.innerHTML = '';
       results.insertAdjacentHTML('afterbegin', html);
+      // history.pushState(null, '', `#${r.id}`);
     });
   });
 });
@@ -198,15 +202,24 @@ results.addEventListener('click', function (e) {
   const link = e.target.closest('.preview__link');
   if (!link) return;
 
-  e.preventDefault(); // prevent default anchor behavior
-  const recipeId = link.getAttribute('href');
-  if (!recipeId) return;
+  //e.preventDefault(); // prevent default anchor behavior
+  // const recipeId = link.getAttribute('href').slice(1);
+  // console.log('href=', recipeId);
+  // if (!recipeId) return;
 
-  try {
-    // Or render recipe here if you like
-    // You can render like:
-    renderRecipe(recipeId); // if you update renderRecipe to accept data
-  } catch (err) {
-    console.error('Error loading recipe:', err);
-  }
+  // try {
+  //   // Or render recipe here if you like
+  //   // You can render like:
+  //   renderRecipe(recipeId); // if you update renderRecipe to accept data
+  // } catch (err) {
+  //   console.error('Error loading recipe:', err);
+  // }
 });
+
+['hashchange', 'load'].forEach(ev =>
+  window.addEventListener(ev, function () {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    renderRecipe(id);
+  })
+);
