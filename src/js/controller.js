@@ -181,7 +181,7 @@ searchForm.addEventListener('submit', async function (e) {
 
 function renderRecipe() {
   getRecipe('664c8f193e7aa067e94e8297').then(data => {
-    let { recipe } = data.data;
+    let { recipe } = Dummy.data;
     console.log(recipe);
     const html = `
     <figure class="recipe__fig">
@@ -278,7 +278,6 @@ ${recipe.ingredients
           </a>
         </div>
     `;
-
     qs('.recipe').innerHTML = '';
     qs('.recipe').insertAdjacentHTML('afterbegin', html);
   });
