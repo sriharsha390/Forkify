@@ -168,10 +168,10 @@ searchForm.addEventListener('submit', async function(e) {
     });
 });
 function renderRecipe() {
-    // getRecipe('664c8f193e7aa067e94e8297').then(data => {
-    let { recipe } = Dummy.data;
-    console.log(recipe);
-    const html = `
+    getRecipe('664c8f193e7aa067e94e8297').then((data)=>{
+        let { recipe } = data.data;
+        console.log(recipe);
+        const html = `
     <figure class="recipe__fig">
           <img src="${recipe.image_url}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
@@ -224,7 +224,7 @@ function renderRecipe() {
           <h2 class="heading--2">Recipe ingredients</h2>
           <ul class="recipe__ingredient-list">
 ${recipe.ingredients.map((el)=>{
-        return `<li class="recipe__ingredient">
+            return `<li class="recipe__ingredient">
               <svg class="recipe__icon">
                 <use href="src/img/icons.svg#icon-check"></use>
               </svg>
@@ -234,7 +234,7 @@ ${recipe.ingredients.map((el)=>{
                 ${el.description}
               </div>
             </li>`;
-    }).join('')}
+        }).join('')}
            
           </ul>
         </div>
@@ -258,8 +258,9 @@ ${recipe.ingredients.map((el)=>{
           </a>
         </div>
     `;
-    qs('.recipe').innerHTML = '';
-    qs('.recipe').insertAdjacentHTML('afterbegin', html);
+        qs('.recipe').innerHTML = '';
+        qs('.recipe').insertAdjacentHTML('afterbegin', html);
+    });
 }
 renderRecipe();
 

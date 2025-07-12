@@ -180,10 +180,10 @@ searchForm.addEventListener('submit', async function (e) {
 });
 
 function renderRecipe() {
-  // getRecipe('664c8f193e7aa067e94e8297').then(data => {
-  let { recipe } = Dummy.data;
-  console.log(recipe);
-  const html = `
+  getRecipe('664c8f193e7aa067e94e8297').then(data => {
+    let { recipe } = data.data;
+    console.log(recipe);
+    const html = `
     <figure class="recipe__fig">
           <img src="${recipe.image_url}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
@@ -278,7 +278,9 @@ ${recipe.ingredients
           </a>
         </div>
     `;
-  qs('.recipe').innerHTML = '';
-  qs('.recipe').insertAdjacentHTML('afterbegin', html);
+
+    qs('.recipe').innerHTML = '';
+    qs('.recipe').insertAdjacentHTML('afterbegin', html);
+  });
 }
 renderRecipe();
