@@ -130,7 +130,7 @@
 
   // Only insert newRequire.load when it is actually used.
   // The code in this file is linted against ES5, so dynamic import is not allowed.
-  // INSERT_LOAD_HERE
+  function $parcel$resolve(url) {  url = importMap[url] || url;  return import.meta.resolve(distDir + url);}newRequire.resolve = $parcel$resolve;
 
   Object.defineProperty(newRequire, 'root', {
     get: function () {
@@ -667,6 +667,9 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"7dWZ8":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _iconsSvg = require("url:../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 const recipeContainer = document.querySelector('.recipe');
 const timeout = function(s) {
     return new Promise(function(_, reject) {
@@ -825,7 +828,7 @@ searchForm.addEventListener('submit', async function(e) {
                 <p class="preview__publisher">${r.publisher}</p>
                 <div class="preview__user-generated">
                   <svg>
-                    <use href="src/img/icons.svg#icon-user"></use>
+                    <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
                   </svg>
                 </div>
               </div>
@@ -851,14 +854,14 @@ function renderRecipe() {
         <div class="recipe__details">
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="src/img/icons.svg#icon-clock"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-clock"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--minutes">${recipe.cooking_time}</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="src/img/icons.svg#icon-users"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-users"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
             <span class="recipe__info-text">servings</span>
@@ -866,12 +869,12 @@ function renderRecipe() {
             <div class="recipe__info-buttons">
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="src/img/icons.svg#icon-minus-circle"></use>
+                  <use href="${(0, _iconsSvgDefault.default)}#icon-minus-circle"></use>
                 </svg>
               </button>
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="src/img/icons.svg#icon-plus-circle"></use>
+                  <use href="${(0, _iconsSvgDefault.default)}#icon-plus-circle"></use>
                 </svg>
               </button>
             </div>
@@ -879,12 +882,12 @@ function renderRecipe() {
 
           <div class="recipe__user-generated">
             <svg>
-              <use href="src/img/icons.svg#icon-user"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
             </svg>
           </div>
           <button class="btn--round">
             <svg class="">
-              <use href="src/img/icons.svg#icon-bookmark-fill"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-bookmark-fill"></use>
             </svg>
           </button>
         </div>
@@ -895,7 +898,7 @@ function renderRecipe() {
 ${recipe.ingredients.map((el)=>{
             return `<li class="recipe__ingredient">
               <svg class="recipe__icon">
-                <use href="src/img/icons.svg#icon-check"></use>
+                <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
               </svg>
               <div class="recipe__quantity">${el.quantity}</div>
               <div class="recipe__description">
@@ -922,7 +925,7 @@ ${recipe.ingredients.map((el)=>{
           >
             <span>Directions</span>
             <svg class="search__icon">
-              <use href="src/img/icons.svg#icon-arrow-right"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
             </svg>
           </a>
         </div>
@@ -933,6 +936,39 @@ ${recipe.ingredients.map((el)=>{
 }
 renderRecipe();
 
-},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {})
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","url:../img/icons.svg":"fd0vu"}],"jnFvT":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"fd0vu":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
+
+},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=Forkify.4a59a05f.js.map
