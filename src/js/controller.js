@@ -147,10 +147,23 @@ async function getRecipe(id) {
   }
 }
 //// Showing results///
+function renderSpinner(parentEl) {
+  const spinner = `
+    <div class="spinner">
+      <svg>
+        <use href="${icons}#icon-loader"></use>
+      </svg>
+    </div>
+  `;
+  parentEl.innerHTML = ''; // Clear any existing content
+  parentEl.insertAdjacentHTML('afterbegin', spinner);
+}
+
 const searchForm = qs('.search');
 searchForm.addEventListener('submit', async function (e) {
   e.preventDefault();
   const dishName = qs('.search__field').value;
+  renderSpinner(results);
   getDishes(dishName).then(data => {
     console.log(data.data);
     const { recipes } = data.data;
