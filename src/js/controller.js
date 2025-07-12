@@ -10,109 +10,6 @@ const timeout = function (s) {
 };
 
 // https://forkify-api.herokuapp.com/v2
-const Dummy = {
-  data: {
-    recipe: {
-      cooking_time: 120,
-      id: '664c8f193e7aa067e94e8297',
-      image_url: 'http://forkify-api.herokuapp.com/images/100111309d9.jpg',
-      ingredients: [
-        {
-          description: 'white sugar',
-          quantity: 1.5,
-          unit: 'tsps',
-        },
-        {
-          description: 'warm water',
-          quantity: 1,
-          unit: 'cup',
-        },
-        {
-          description: 'active dry yeast',
-          quantity: 1.5,
-          unit: 'tsps',
-        },
-        {
-          description: 'olive oil',
-          quantity: 1,
-          unit: 'tbsp',
-        },
-        {
-          description: 'salt',
-          quantity: 0.5,
-          unit: 'tsp',
-        },
-        {
-          description: 'all-purpose flour',
-          quantity: 2,
-          unit: 'cups',
-        },
-        {
-          description: 'can crushed tomatoes',
-          quantity: 1,
-          unit: '',
-        },
-        {
-          description: 'packed brown sugar',
-          quantity: 1,
-          unit: 'tbsp',
-        },
-        {
-          description: 'garlic powder',
-          quantity: 0.5,
-          unit: 'tsp',
-        },
-        {
-          description: 'olive oil',
-          quantity: 1,
-          unit: 'tsp',
-        },
-        {
-          description: 'salt',
-          quantity: 0.5,
-          unit: 'tsp',
-        },
-        {
-          description: 'shredded mozzarella cheese divided',
-          quantity: 3,
-          unit: 'cups',
-        },
-        {
-          description: 'bulk italian sausage',
-          quantity: 0.5,
-          unit: 'pound',
-        },
-        {
-          description: 'package sliced pepperoni',
-          quantity: 1,
-          unit: '',
-        },
-        {
-          description: 'package sliced fresh mushrooms',
-          quantity: 1,
-          unit: '',
-        },
-        {
-          description: 'green bell pepper chopped',
-          quantity: 1,
-          unit: '',
-        },
-        {
-          description: 'red bell pepper chopped',
-          quantity: 1,
-          unit: '',
-        },
-      ],
-      publisher: 'All Recipes',
-      servings: 4,
-      source_url:
-        'http://allrecipes.com/Recipe/Double-Crust-Stuffed-Pizza/Detail.aspx',
-      title: 'Double Crust Stuffed Pizza',
-    },
-  },
-  status: 'success',
-};
-
 ///////////////////////////////////////
 function qs(params) {
   return document.querySelector(params);
@@ -188,6 +85,7 @@ searchForm.addEventListener('submit', async function (e) {
             </a>
           </li>
       `;
+      results.innerHTML = '';
       results.insertAdjacentHTML('afterbegin', html);
     });
   });
@@ -307,7 +205,6 @@ results.addEventListener('click', function (e) {
   try {
     // Or render recipe here if you like
     // You can render like:
-    console.log(recipeId);
     renderRecipe(recipeId); // if you update renderRecipe to accept data
   } catch (err) {
     console.error('Error loading recipe:', err);
