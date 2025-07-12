@@ -120,7 +120,7 @@ function qs(params) {
 const results = qs('.results');
 async function getDishes(dish) {
   try {
-    console.log('fetching');
+    console.log('fetching Dishes');
     const res = await fetch(
       `https://forkify-api.jonas.io/api/v2/recipes/?search=${dish}`
       // `https://www.themealdb.com/api/json/v1/1/search.php?s=${dish}`
@@ -134,7 +134,7 @@ async function getDishes(dish) {
 }
 async function getRecipe(id) {
   try {
-    console.log('fetching');
+    console.log('fetching recipe');
     const res = await fetch(
       `https://forkify-api.jonas.io/api/v2/recipes/${id}`
       // `https://www.themealdb.com/api/json/v1/1/search.php?s=${dish}`
@@ -180,9 +180,9 @@ searchForm.addEventListener('submit', async function (e) {
   });
 });
 
-function renderRecipe() {
-  getRecipe('664c8f193e7aa067e94e8297').then(data => {
-    let { recipe } = Dummy.data;
+function renderRecipe(id) {
+  getRecipe(id).then(data => {
+    let { recipe } = data.data;
     console.log(recipe);
     const html = `
     <figure class="recipe__fig">
@@ -283,4 +283,20 @@ ${recipe.ingredients
     qs('.recipe').insertAdjacentHTML('afterbegin', html);
   });
 }
-renderRecipe();
+results.addEventListener('click', function (e) {
+  const link = e.target.closest('.preview__link');
+  if (!link) return;
+
+  e.preventDefault(); // prevent default anchor behavior
+  const recipeId = link.getAttribute('href');
+  if (!recipeId) return;
+
+  try {
+    // Or render recipe here if you like
+    // You can render like:
+    console.log(recipeId);
+    renderRecipe(recipeId); // if you update renderRecipe to accept data
+  } catch (err) {
+    console.error('Error loading recipe:', err);
+  }
+});
