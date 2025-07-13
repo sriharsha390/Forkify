@@ -747,7 +747,11 @@ document.addEventListener('click', function(e) {
         allRecipes.push(_modelJs.state.recipe);
         sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
         console.log('Calling displayBookmarkmsg...'); // Add this debug line
-        _viewJs.displayBookmarkmsg();
+        _viewJs.displayBookmarkmsg("Bookmark Added Successfully!");
+    } else {
+        _viewJs.displayBookmarkmsg("removing bookmark");
+        allRecipes = allRecipes.filter((r)=>r.id !== _modelJs.state.recipe.id);
+        sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
     }
     console.log(allRecipes);
 });
@@ -2873,7 +2877,7 @@ function renderPagination(currentPage, numPages) {
       </button>` : ''}`;
     pagination.innerHTML = html;
 }
-function displayBookmarkmsg() {
+function displayBookmarkmsg(msg) {
     // Create a temporary message that appears and disappears
     const message = document.createElement('div');
     message.className = 'bookmark-notification';
@@ -2884,7 +2888,7 @@ function displayBookmarkmsg() {
           <use href="${0, _iconsSvgDefault.default}#icon-smile"></use>
         </svg>
       </div>
-      <p>Bookmark Added Successfully!</p>
+      <p>${msg}</p>
     </div>
   `;
     // Add the message to the body

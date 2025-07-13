@@ -193,7 +193,7 @@ function renderPagination(currentPage, numPages) {
   pagination.innerHTML = html;
 }
 
-function displayBookmarkmsg() {
+function displayBookmarkmsg(msg) {
   // Create a temporary message that appears and disappears
   const message = document.createElement('div');
   message.className = 'bookmark-notification';
@@ -204,7 +204,7 @@ function displayBookmarkmsg() {
           <use href="${icons}#icon-smile"></use>
         </svg>
       </div>
-      <p>Bookmark Added Successfully!</p>
+      <p>${msg}</p>
     </div>
   `;
   

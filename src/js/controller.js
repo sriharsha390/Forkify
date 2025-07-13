@@ -93,7 +93,12 @@ document.addEventListener('click', function (e) {
     allRecipes.push(model.state.recipe);
     sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
     console.log('Calling displayBookmarkmsg...'); // Add this debug line
-    view.displayBookmarkmsg();
+    view.displayBookmarkmsg("Bookmark Added Successfully!");
+  }
+  else{
+    view.displayBookmarkmsg("removing bookmark");
+    allRecipes=allRecipes.filter(r=>r.id!==model.state.recipe.id)
+    sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
   }
   console.log(allRecipes);
 });
