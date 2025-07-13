@@ -393,6 +393,7 @@ body {
 }
 
 .preview__link:link, .preview__link:visited {
+  background-color: #fff;
   border-right: 1px solid #fff;
   align-items: center;
   padding: 1.5rem 3.25rem;
@@ -487,7 +488,7 @@ body {
 
 .search-results {
   flex-direction: column;
-  padding: 3rem 0;
+  padding: 1rem 0 0;
   display: flex;
 }
 
@@ -497,8 +498,12 @@ body {
 }
 
 .pagination {
-  margin-top: auto;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
   padding: 0 3.5rem;
+  display: flex;
 }
 
 .pagination:after {
@@ -513,6 +518,12 @@ body {
 
 .pagination__btn--next {
   float: right;
+}
+
+.pagination__info {
+  color: #918581;
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 .copyright {

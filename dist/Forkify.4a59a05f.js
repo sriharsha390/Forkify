@@ -667,12 +667,10 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"7dWZ8":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _webImmediateJs = require("core-js/modules/web.immediate.js");
-var _iconsSvg = require("url:../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _runtime = require("regenerator-runtime/runtime");
-const recipeContainer = document.querySelector('.recipe');
+var _modelJs = require("./model.js");
+var _viewJs = require("./view.js");
 const timeout = function(s) {
     return new Promise(function(_, reject) {
         setTimeout(function() {
@@ -680,180 +678,39 @@ const timeout = function(s) {
         }, s * 1000);
     });
 };
-// https://forkify-api.herokuapp.com/v2
-///////////////////////////////////////
-function qs(params) {
-    return document.querySelector(params);
-}
-const results = qs('.results');
-async function getDishes(dish) {
-    try {
-        console.log('fetching Dishes');
-        const res = await fetch(`https://forkify-api.jonas.io/api/v2/recipes/?search=${dish}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-        return data;
-    } catch (err) {
-        throw err;
-    }
-}
-async function getRecipe(id) {
-    try {
-        console.log('fetching recipe');
-        const res = await fetch(`https://forkify-api.jonas.io/api/v2/recipes/${id}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-        return data;
-    } catch (err) {
-        throw err;
-    }
-}
-//// Showing results///
-function renderSpinner(parentEl) {
-    const spinner = `
-    <div class="spinner">
-      <svg>
-        <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
-      </svg>
-    </div>
-  `;
-    parentEl.innerHTML = ''; // Clear any existing content
-    parentEl.insertAdjacentHTML('afterbegin', spinner);
-}
-const searchForm = qs('.search');
+const searchForm = _viewJs.qs('.search');
 searchForm.addEventListener('submit', async function(e) {
     e.preventDefault();
-    const dishName = qs('.search__field').value;
-    renderSpinner(results);
-    getDishes(dishName).then((data)=>{
-        const { recipes } = data.data;
-        // Clear results once before adding all recipes
-        results.innerHTML = '';
-        if (recipes.length === 0) {
-            results.innerHTML = '<p>No recipes found</p>';
-            return;
-        }
-        recipes.forEach((r)=>{
-            const html = `
-      <li class="preview">
-            <a class="preview__link preview__link--active" href="#${r.id}">
-              <figure class="preview__fig">
-                <img src=${r.image_url} alt="Test" />
-              </figure>
-              <div class="preview__data">
-                <h4 class="preview__title">${r.title}</h4>
-                <p class="preview__publisher">${r.publisher}</p>
-                <div class="preview__user-generated">
-                  <svg>
-                    <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
-                  </svg>
-                </div>
-              </div>
-            </a>
-          </li>
-      `;
-            results.insertAdjacentHTML('beforeend', html);
-        // history.pushState(null, '', `#${r.id}`);
-        });
-    });
+    const dishName = _viewJs.getSearchQuery();
+    _viewJs.renderSpinner(_viewJs.results);
+    try {
+        await _modelJs.getRecipes(dishName);
+        // Reset to page 1 for new search
+        _modelJs.state.search.page = 1;
+        renderSearchResults();
+    } catch (err) {
+        console.error('Error searching recipes:', err);
+    }
 });
-function renderRecipe(id) {
-    renderSpinner(recipeContainer);
-    getRecipe(id).then((data)=>{
-        let { recipe } = data.data;
-        console.log(recipe);
-        const html = `
-    <figure class="recipe__fig">
-          <img src="${recipe.image_url}" alt="Tomato" class="recipe__img" />
-          <h1 class="recipe__title">
-            <span>${recipe.title}</span>
-          </h1>
-        </figure>
-
-        <div class="recipe__details">
-          <div class="recipe__info">
-            <svg class="recipe__info-icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-clock"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${recipe.cooking_time}</span>
-            <span class="recipe__info-text">minutes</span>
-          </div>
-          <div class="recipe__info">
-            <svg class="recipe__info-icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-users"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
-            <span class="recipe__info-text">servings</span>
-
-            <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
-                <svg>
-                  <use href="${(0, _iconsSvgDefault.default)}#icon-minus-circle"></use>
-                </svg>
-              </button>
-              <button class="btn--tiny btn--increase-servings">
-                <svg>
-                  <use href="${(0, _iconsSvgDefault.default)}#icon-plus-circle"></use>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="recipe__user-generated">
-            <svg>
-              <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
-            </svg>
-          </div>
-          <button class="btn--round">
-            <svg class="">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-bookmark-fill"></use>
-            </svg>
-          </button>
-        </div>
-
-        <div class="recipe__ingredients">
-          <h2 class="heading--2">Recipe ingredients</h2>
-          <ul class="recipe__ingredient-list">
-${recipe.ingredients.map((el)=>{
-            return `<li class="recipe__ingredient">
-              <svg class="recipe__icon">
-                <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
-              </svg>
-              <div class="recipe__quantity">${el.quantity}</div>
-              <div class="recipe__description">
-                <span class="recipe__unit">${el.unit}</span>
-                ${el.description}
-              </div>
-            </li>`;
-        }).join('')}
-           
-          </ul>
-        </div>
-
-        <div class="recipe__directions">
-          <h2 class="heading--2">How to cook it</h2>
-          <p class="recipe__directions-text">
-            This recipe was carefully designed and tested by
-            <span class="recipe__publisher">${recipe.publisher}</span>. Please check out
-            directions at their website.
-          </p>
-          <a
-            class="btn--small recipe__btn"
-            href="${recipe.source_url}"
-            target="_blank"
-          >
-            <span>Directions</span>
-            <svg class="search__icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
-            </svg>
-          </a>
-        </div>
-    `;
-        qs('.recipe').innerHTML = '';
-        qs('.recipe').insertAdjacentHTML('afterbegin', html);
-    });
+// Render search results with pagination
+function renderSearchResults() {
+    const results = _modelJs.getSearchResultsPage();
+    const numPages = _modelJs.getNumPages();
+    console.log('Rendering search results:', results.length, 'results');
+    console.log('Current page:', _modelJs.state.search.page, 'Total pages:', numPages);
+    _viewJs.renderSearchResults(results);
+    _viewJs.renderPagination(_modelJs.state.search.page, numPages);
 }
-results.addEventListener('click', function(e) {
+async function renderRecipe(id) {
+    _viewJs.renderSpinner(_viewJs.recipeContainer);
+    try {
+        await _modelJs.getRecipe(id);
+        _viewJs.renderRecipe(_modelJs.state.recipe);
+    } catch (err) {
+        console.error('Error loading recipe:', err);
+    }
+}
+_viewJs.results.addEventListener('click', function(e) {
     const link = e.target.closest('.preview__link');
     if (!link) return;
 //e.preventDefault(); // prevent default anchor behavior
@@ -868,6 +725,17 @@ results.addEventListener('click', function(e) {
 //   console.error('Error loading recipe:', err);
 // }
 });
+// Pagination event handler
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn--inline');
+    if (!btn) return;
+    const goToPage = parseInt(btn.dataset.goto);
+    if (goToPage) {
+        console.log('Pagination clicked, going to page:', goToPage);
+        _modelJs.state.search.page = goToPage;
+        renderSearchResults();
+    }
+});
 [
     'hashchange',
     'load'
@@ -877,7 +745,7 @@ results.addEventListener('click', function(e) {
         renderRecipe(id);
     }));
 
-},{"core-js/modules/web.immediate.js":"bzsBv","url:../img/icons.svg":"fd0vu","regenerator-runtime/runtime":"f6ot0","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"bzsBv":[function(require,module,exports,__globalThis) {
+},{"core-js/modules/web.immediate.js":"bzsBv","regenerator-runtime/runtime":"f6ot0","./model.js":"3QBkH","./view.js":"h9VSW"}],"bzsBv":[function(require,module,exports,__globalThis) {
 'use strict';
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
 require("52e9b3eefbbce1ed");
@@ -2130,10 +1998,7 @@ module.exports = function(scheduler, hasTimeArg) {
     } : scheduler;
 };
 
-},{"aa6765693e58a0fe":"6xMjU","a68ecfcbf29c46f6":"9A5Vw","7087588d33667af2":"2KfBB","864edee099e8affb":"k2Sud","3a3a5a2cfab86f21":"qxRHs","cff2c830bdea4f24":"kGYHC","58a74f00cee1ac64":"elQJL"}],"fd0vu":[function(require,module,exports,__globalThis) {
-module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
-
-},{}],"f6ot0":[function(require,module,exports,__globalThis) {
+},{"aa6765693e58a0fe":"6xMjU","a68ecfcbf29c46f6":"9A5Vw","7087588d33667af2":"2KfBB","864edee099e8affb":"k2Sud","3a3a5a2cfab86f21":"qxRHs","cff2c830bdea4f24":"kGYHC","58a74f00cee1ac64":"elQJL"}],"f6ot0":[function(require,module,exports,__globalThis) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -2718,7 +2583,59 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"jnFvT":[function(require,module,exports,__globalThis) {
+},{}],"3QBkH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state);
+parcelHelpers.export(exports, "getRecipes", ()=>getRecipes);
+parcelHelpers.export(exports, "getRecipe", ()=>getRecipe);
+parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
+parcelHelpers.export(exports, "getNumPages", ()=>getNumPages);
+const state = {
+    recipe: {},
+    search: {
+        query: '',
+        results: [],
+        page: 1,
+        resultsPerPage: 10
+    },
+    bookmarks: []
+};
+async function getRecipes(query) {
+    try {
+        const res = await fetch(`https://forkify-api.jonas.io/api/v2/recipes/?search=${query}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+        state.search.results = data.data.recipes;
+        return data;
+    } catch (err) {
+        console.error(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
+        throw err;
+    }
+}
+async function getRecipe(id) {
+    try {
+        const res = await fetch(`https://forkify-api.jonas.io/api/v2/recipes/${id}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+        state.recipe = data.data.recipe;
+        return data;
+    } catch (err) {
+        console.error(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
+        throw err;
+    }
+}
+// Pagination helper functions
+function getSearchResultsPage(page = state.search.page) {
+    const start = (page - 1) * state.search.resultsPerPage;
+    const end = page * state.search.resultsPerPage;
+    return state.search.results.slice(start, end);
+}
+function getNumPages() {
+    return Math.ceil(state.search.results.length / state.search.resultsPerPage);
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"jnFvT":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -2747,6 +2664,193 @@ exports.export = function(dest, destName, get) {
         get: get
     });
 };
+
+},{}],"h9VSW":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "qs", ()=>qs);
+parcelHelpers.export(exports, "renderSpinner", ()=>renderSpinner);
+parcelHelpers.export(exports, "renderSearchResults", ()=>renderSearchResults);
+parcelHelpers.export(exports, "renderRecipe", ()=>renderRecipe);
+parcelHelpers.export(exports, "renderPagination", ()=>renderPagination);
+parcelHelpers.export(exports, "getSearchQuery", ()=>getSearchQuery);
+parcelHelpers.export(exports, "clearSearchInput", ()=>clearSearchInput);
+parcelHelpers.export(exports, "results", ()=>results);
+parcelHelpers.export(exports, "recipeContainer", ()=>recipeContainer);
+var _iconsSvg = require("url:../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// DOM Elements
+const recipeContainer = document.querySelector('.recipe');
+const results = document.querySelector('.results');
+// Utility function for DOM selection
+function qs(selector) {
+    return document.querySelector(selector);
+}
+// Render spinner
+function renderSpinner(parentEl) {
+    const spinner = `
+    <div class="spinner">
+      <svg>
+        <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
+      </svg>
+    </div>
+  `;
+    parentEl.innerHTML = '';
+    parentEl.insertAdjacentHTML('afterbegin', spinner);
+}
+// Render search results
+function renderSearchResults(recipes) {
+    results.innerHTML = '';
+    if (recipes.length === 0) {
+        results.innerHTML = '<p>No recipes found</p>';
+        return;
+    }
+    recipes.forEach((recipe)=>{
+        const html = `
+      <li class="preview">
+        <a class="preview__link preview__link--active" href="#${recipe.id}">
+          <figure class="preview__fig">
+            <img src=${recipe.image_url} alt="Test" />
+          </figure>
+          <div class="preview__data">
+            <h4 class="preview__title">${recipe.title}</h4>
+            <p class="preview__publisher">${recipe.publisher}</p>
+            <div class="preview__user-generated">
+              <svg>
+                <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
+              </svg>
+            </div>
+          </div>
+        </a>
+      </li>
+    `;
+        results.insertAdjacentHTML('beforeend', html);
+    });
+}
+// Render recipe details
+function renderRecipe(recipe) {
+    const html = `
+    <figure class="recipe__fig">
+      <img src="${recipe.image_url}" alt="Tomato" class="recipe__img" />
+      <h1 class="recipe__title">
+        <span>${recipe.title}</span>
+      </h1>
+    </figure>
+
+    <div class="recipe__details">
+      <div class="recipe__info">
+        <svg class="recipe__info-icon">
+          <use href="${(0, _iconsSvgDefault.default)}#icon-clock"></use>
+        </svg>
+        <span class="recipe__info-data recipe__info-data--minutes">${recipe.cooking_time}</span>
+        <span class="recipe__info-text">minutes</span>
+      </div>
+      <div class="recipe__info">
+        <svg class="recipe__info-icon">
+          <use href="${(0, _iconsSvgDefault.default)}#icon-users"></use>
+        </svg>
+        <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
+        <span class="recipe__info-text">servings</span>
+
+        <div class="recipe__info-buttons">
+          <button class="btn--tiny btn--increase-servings">
+            <svg>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-minus-circle"></use>
+            </svg>
+          </button>
+          <button class="btn--tiny btn--increase-servings">
+            <svg>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-plus-circle"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="recipe__user-generated">
+        <svg>
+          <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
+        </svg>
+      </div>
+      <button class="btn--round">
+        <svg class="">
+          <use href="${(0, _iconsSvgDefault.default)}#icon-bookmark-fill"></use>
+        </svg>
+      </button>
+    </div>
+
+    <div class="recipe__ingredients">
+      <h2 class="heading--2">Recipe ingredients</h2>
+      <ul class="recipe__ingredient-list">
+        ${recipe.ingredients.map((el)=>{
+        return `<li class="recipe__ingredient">
+              <svg class="recipe__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
+              </svg>
+              <div class="recipe__quantity">${el.quantity}</div>
+              <div class="recipe__description">
+                <span class="recipe__unit">${el.unit}</span>
+                ${el.description}
+              </div>
+            </li>`;
+    }).join('')}
+      </ul>
+    </div>
+
+    <div class="recipe__directions">
+      <h2 class="heading--2">How to cook it</h2>
+      <p class="recipe__directions-text">
+        This recipe was carefully designed and tested by
+        <span class="recipe__publisher">${recipe.publisher}</span>. Please check out
+        directions at their website.
+      </p>
+      <a
+        class="btn--small recipe__btn"
+        href="${recipe.source_url}"
+        target="_blank"
+      >
+        <span>Directions</span>
+        <svg class="search__icon">
+          <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
+        </svg>
+      </a>
+    </div>
+  `;
+    recipeContainer.innerHTML = '';
+    recipeContainer.insertAdjacentHTML('afterbegin', html);
+}
+// Get search query from input
+function getSearchQuery() {
+    return qs('.search__field').value;
+}
+// Clear search input
+function clearSearchInput() {
+    qs('.search__field').value = '';
+}
+// Render pagination buttons
+function renderPagination(currentPage, numPages) {
+    const pagination = document.querySelector('.pagination');
+    console.log('Rendering pagination for page:', currentPage, 'of', numPages);
+    // Don't render pagination if there's only 1 page or no results
+    if (numPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+    const html = `${currentPage > 1 ? `<button class="btn--inline pagination__btn--prev" data-goto="${currentPage - 1}">
+        <svg class="search__icon">
+          <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+        </svg>
+        <span>Page ${currentPage - 1}</span>
+      </button>` : ''}<span class="pagination__info">Page ${currentPage} of ${numPages}</span>${currentPage < numPages ? `<button class="btn--inline pagination__btn--next" data-goto="${currentPage + 1}">
+        <span>Page ${currentPage + 1}</span>
+        <svg class="search__icon">
+          <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+        </svg>
+      </button>` : ''}`;
+    pagination.innerHTML = html;
+}
+
+},{"url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fd0vu":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
 
 },{}]},["appxp","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 

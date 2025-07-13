@@ -19,11 +19,25 @@ searchForm.addEventListener('submit', async function (e) {
   
   try {
     await model.getRecipes(dishName);
-    view.renderSearchResults(model.state.search.results);
+    // Reset to page 1 for new search
+    model.state.search.page = 1;
+    renderSearchResults();
   } catch (err) {
     console.error('Error searching recipes:', err);
   }
 });
+
+// Render search results with pagination
+function renderSearchResults() {
+  const results = model.getSearchResultsPage();
+  const numPages = model.getNumPages();
+  
+  console.log('Rendering search results:', results.length, 'results');
+  console.log('Current page:', model.state.search.page, 'Total pages:', numPages);
+  
+  view.renderSearchResults(results);
+  view.renderPagination(model.state.search.page, numPages);
+}
 
 async function renderRecipe(id) {
   view.renderSpinner(view.recipeContainer);
@@ -51,6 +65,19 @@ view.results.addEventListener('click', function (e) {
   // } catch (err) {
   //   console.error('Error loading recipe:', err);
   // }
+});
+
+// Pagination event handler
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn--inline');
+  if (!btn) return;
+
+  const goToPage = parseInt(btn.dataset.goto);
+  if (goToPage) {
+    console.log('Pagination clicked, going to page:', goToPage);
+    model.state.search.page = goToPage;
+    renderSearchResults();
+  }
 });
 
 ['hashchange', 'load'].forEach(ev =>

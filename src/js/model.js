@@ -1,9 +1,10 @@
-
 const state = {
     recipe: {},
     search: {
         query: '',
         results: [],
+        page: 1,
+        resultsPerPage: 10,
     },
     bookmarks: [],
 };
@@ -34,4 +35,16 @@ async function getRecipe(id) {
     }
 }
 
-export { state, getRecipes, getRecipe };
+// Pagination helper functions
+function getSearchResultsPage(page = state.search.page) {
+    const start = (page - 1) * state.search.resultsPerPage;
+    const end = page * state.search.resultsPerPage;
+    
+    return state.search.results.slice(start, end);
+}
+
+function getNumPages() {
+    return Math.ceil(state.search.results.length / state.search.resultsPerPage);
+}
+
+export { state, getRecipes, getRecipe, getSearchResultsPage, getNumPages };

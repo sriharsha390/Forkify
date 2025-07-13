@@ -166,11 +166,39 @@ function clearSearchInput() {
   qs('.search__field').value = '';
 }
 
+// Render pagination buttons
+function renderPagination(currentPage, numPages) {
+  const pagination = document.querySelector('.pagination');
+  
+  console.log('Rendering pagination for page:', currentPage, 'of', numPages);
+  
+  // Don't render pagination if there's only 1 page or no results
+  if (numPages <= 1) {
+    pagination.innerHTML = '';
+    return;
+  }
+
+  const html = `${currentPage > 1 ? `<button class="btn--inline pagination__btn--prev" data-goto="${currentPage - 1}">
+        <svg class="search__icon">
+          <use href="${icons}#icon-arrow-left"></use>
+        </svg>
+        <span>Page ${currentPage - 1}</span>
+      </button>` : ''}<span class="pagination__info">Page ${currentPage} of ${numPages}</span>${currentPage < numPages ? `<button class="btn--inline pagination__btn--next" data-goto="${currentPage + 1}">
+        <span>Page ${currentPage + 1}</span>
+        <svg class="search__icon">
+          <use href="${icons}#icon-arrow-right"></use>
+        </svg>
+      </button>` : ''}`;
+
+  pagination.innerHTML = html;
+}
+
 export {
   qs,
   renderSpinner,
   renderSearchResults,
   renderRecipe,
+  renderPagination,
   getSearchQuery,
   clearSearchInput,
   results,
