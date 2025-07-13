@@ -62,11 +62,17 @@ const searchForm = qs('.search');
 searchForm.addEventListener('submit', async function (e) {
   e.preventDefault();
   const dishName = qs('.search__field').value;
-  renderSpinner(results);
+   renderSpinner(results);
   getDishes(dishName).then(data => {
-    console.log(data.data);
     const { recipes } = data.data;
-    console.log(recipes);
+
+    // Clear results once before adding all recipes
+    results.innerHTML = '';
+
+    if (recipes.length === 0) {
+      results.innerHTML = '<p>No recipes found</p>';
+      return;
+    }
 
     recipes.forEach(r => {
       const html = `
@@ -88,14 +94,14 @@ searchForm.addEventListener('submit', async function (e) {
           </li>
       `;
 
-      results.innerHTML = '';
-      results.insertAdjacentHTML('afterbegin', html);
+      results.insertAdjacentHTML('beforeend', html);
       // history.pushState(null, '', `#${r.id}`);
     });
   });
 });
 
 function renderRecipe(id) {
+  renderSpinner(recipeContainer);
   getRecipe(id).then(data => {
     let { recipe } = data.data;
     console.log(recipe);
