@@ -80,6 +80,25 @@ document.addEventListener('click', function (e) {
   }
 });
 
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn--round');
+  if (!btn) return;
+
+  console.log('Bookmark button clicked!'); // Add this debug line
+
+  sessionStorage.setItem('recipe', JSON.stringify(model.state.recipe));
+  let allRecipes = JSON.parse(sessionStorage.getItem('recipes')) || [];
+  const exists = allRecipes.some(r => r.id === model.state.recipe.id);
+  if (!exists) {
+    allRecipes.push(model.state.recipe);
+    sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
+    console.log('Calling displayBookmarkmsg...'); // Add this debug line
+    view.displayBookmarkmsg();
+  }
+  console.log(allRecipes);
+});
+
+
 ['hashchange', 'load'].forEach(ev =>
   window.addEventListener(ev, function () {
     const id = window.location.hash.slice(1);
@@ -87,3 +106,13 @@ document.addEventListener('click', function (e) {
     renderRecipe(id);
   })
 );
+document.addEventListener('click',function(e){
+  
+  const btn=e.target.closest('.nav__btn--bookmarks')
+  console.log(btn)
+  if(!btn) return;
+  const recipe=JSON.parse(sessionStorage.getItem('recipes'))
+  console.log(recipe)
+  model.state.search.results=recipe
+  renderSearchResults()
+})

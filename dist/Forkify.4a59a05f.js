@@ -736,6 +736,21 @@ document.addEventListener('click', function(e) {
         renderSearchResults();
     }
 });
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn--round');
+    if (!btn) return;
+    console.log('Bookmark button clicked!'); // Add this debug line
+    sessionStorage.setItem('recipe', JSON.stringify(_modelJs.state.recipe));
+    let allRecipes = JSON.parse(sessionStorage.getItem('recipes')) || [];
+    const exists = allRecipes.some((r)=>r.id === _modelJs.state.recipe.id);
+    if (!exists) {
+        allRecipes.push(_modelJs.state.recipe);
+        sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
+        console.log('Calling displayBookmarkmsg...'); // Add this debug line
+        _viewJs.displayBookmarkmsg();
+    }
+    console.log(allRecipes);
+});
 [
     'hashchange',
     'load'
@@ -744,6 +759,15 @@ document.addEventListener('click', function(e) {
         if (!id) return;
         renderRecipe(id);
     }));
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.nav__btn--bookmarks');
+    console.log(btn);
+    if (!btn) return;
+    const recipe = JSON.parse(sessionStorage.getItem('recipes'));
+    console.log(recipe);
+    _modelJs.state.search.results = recipe;
+    renderSearchResults();
+});
 
 },{"core-js/modules/web.immediate.js":"bzsBv","regenerator-runtime/runtime":"f6ot0","./model.js":"3QBkH","./view.js":"h9VSW"}],"bzsBv":[function(require,module,exports,__globalThis) {
 'use strict';
@@ -2677,6 +2701,7 @@ parcelHelpers.export(exports, "getSearchQuery", ()=>getSearchQuery);
 parcelHelpers.export(exports, "clearSearchInput", ()=>clearSearchInput);
 parcelHelpers.export(exports, "results", ()=>results);
 parcelHelpers.export(exports, "recipeContainer", ()=>recipeContainer);
+parcelHelpers.export(exports, "displayBookmarkmsg", ()=>displayBookmarkmsg);
 var _iconsSvg = require("url:../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 // DOM Elements
@@ -2848,6 +2873,33 @@ function renderPagination(currentPage, numPages) {
       </button>` : ''}`;
     pagination.innerHTML = html;
 }
+function displayBookmarkmsg() {
+    // Create a temporary message that appears and disappears
+    const message = document.createElement('div');
+    message.className = 'bookmark-notification';
+    message.innerHTML = `
+    <div class="message">
+      <div>
+        <svg>
+          <use href="${0, _iconsSvgDefault.default}#icon-smile"></use>
+        </svg>
+      </div>
+      <p>Bookmark Added Successfully!</p>
+    </div>
+  `;
+    // Add the message to the body
+    document.body.appendChild(message);
+    // Remove the message after 3 seconds
+    setTimeout(()=>{
+        message.classList.add('slide-out');
+        setTimeout(()=>{
+            if (message.parentNode) message.parentNode.removeChild(message);
+        }, 300);
+    }, 3000);
+}
+window.addEventListener('load', function() {
+    location.hash = '';
+});
 
 },{"url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fd0vu":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();

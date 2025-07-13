@@ -193,6 +193,35 @@ function renderPagination(currentPage, numPages) {
   pagination.innerHTML = html;
 }
 
+function displayBookmarkmsg() {
+  // Create a temporary message that appears and disappears
+  const message = document.createElement('div');
+  message.className = 'bookmark-notification';
+  message.innerHTML = `
+    <div class="message">
+      <div>
+        <svg>
+          <use href="${icons}#icon-smile"></use>
+        </svg>
+      </div>
+      <p>Bookmark Added Successfully!</p>
+    </div>
+  `;
+  
+  // Add the message to the body
+  document.body.appendChild(message);
+  
+  // Remove the message after 3 seconds
+  setTimeout(() => {
+    message.classList.add('slide-out');
+    setTimeout(() => {
+      if (message.parentNode) {
+        message.parentNode.removeChild(message);
+      }
+    }, 300);
+  }, 3000);
+}
+
 export {
   qs,
   renderSpinner,
@@ -202,5 +231,9 @@ export {
   getSearchQuery,
   clearSearchInput,
   results,
-  recipeContainer
+  recipeContainer,
+  displayBookmarkmsg
 };
+window.addEventListener('load',function(){
+  location.hash=''
+})

@@ -250,6 +250,58 @@ body {
   line-height: 1.5;
 }
 
+.bookmark-notification {
+  z-index: 1000;
+  background: #fff;
+  border: 2px solid #f38e82;
+  border-radius: 10px;
+  padding: 1rem;
+  animation: .3s ease-out slideIn;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  box-shadow: 0 4px 12px #00000026;
+}
+
+.bookmark-notification .message {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bookmark-notification .message p {
+  margin-left: 1rem;
+  font-size: 1.4rem;
+}
+
+.bookmark-notification.slide-out {
+  animation: .3s ease-in slideOut;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
 .header {
   background-color: #f9f5f3;
   grid-area: head;
