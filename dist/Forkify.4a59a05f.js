@@ -747,13 +747,27 @@ document.addEventListener('click', function(e) {
         allRecipes.push(_modelJs.state.recipe);
         sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
         console.log('Calling displayBookmarkmsg...'); // Add this debug line
-        _viewJs.displayBookmarkmsg("Bookmark Added Successfully!");
+        _viewJs.displayBookmarkmsg('Bookmark Added Successfully!');
     } else {
-        _viewJs.displayBookmarkmsg("removing bookmark");
+        _viewJs.displayBookmarkmsg('removing bookmark');
         allRecipes = allRecipes.filter((r)=>r.id !== _modelJs.state.recipe.id);
         sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
     }
     console.log(allRecipes);
+});
+// Servings adjustment event handler
+document.addEventListener('click', function(e) {
+    const increaseBtn = e.target.closest('.btn--increase-servings');
+    const decreaseBtn = e.target.closest('.btn--decrease-servings');
+    if (!increaseBtn && !decreaseBtn) return;
+    const currentServings = _modelJs.state.recipe.servings;
+    let newServings;
+    if (decreaseBtn) newServings = currentServings > 1 ? currentServings - 1 : 1;
+    else if (increaseBtn) newServings = currentServings + 1;
+    // Update servings in model
+    _modelJs.updateServings(newServings);
+    // Re-render recipe with updated quantities
+    _viewJs.renderRecipe(_modelJs.state.recipe);
 });
 [
     'hashchange',
@@ -2619,6 +2633,7 @@ parcelHelpers.export(exports, "getRecipes", ()=>getRecipes);
 parcelHelpers.export(exports, "getRecipe", ()=>getRecipe);
 parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
 parcelHelpers.export(exports, "getNumPages", ()=>getNumPages);
+parcelHelpers.export(exports, "updateServings", ()=>updateServings);
 const state = {
     recipe: {},
     search: {
@@ -2652,6 +2667,16 @@ async function getRecipe(id) {
         console.error(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
         throw err;
     }
+}
+// Update servings and recalculate ingredient quantities
+function updateServings(newServings) {
+    const oldServings = state.recipe.servings;
+    // Update ingredients quantities
+    state.recipe.ingredients.forEach((ing)=>{
+        if (ing.quantity) ing.quantity = ing.quantity * newServings / oldServings;
+    });
+    // Update servings count
+    state.recipe.servings = newServings;
 }
 // Pagination helper functions
 function getSearchResultsPage(page = state.search.page) {
@@ -2711,6 +2736,20 @@ var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 // DOM Elements
 const recipeContainer = document.querySelector('.recipe');
 const results = document.querySelector('.results');
+// Helper function to format ingredient quantities
+function formatQuantity(quantity) {
+    if (!quantity) return '';
+    // Round to 2 decimal places and remove trailing zeros
+    const rounded = Math.round(quantity * 100) / 100;
+    // Convert to fraction for common values
+    if (rounded === 0.5) return '1/2';
+    if (rounded === 0.33 || rounded === 0.333) return '1/3';
+    if (rounded === 0.25) return '1/4';
+    if (rounded === 0.75) return '3/4';
+    if (rounded === 0.67 || rounded === 0.667) return '2/3';
+    // Return as decimal if it has decimal places, otherwise as integer
+    return rounded % 1 === 0 ? rounded.toString() : rounded.toString();
+}
 // Utility function for DOM selection
 function qs(selector) {
     return document.querySelector(selector);
@@ -2782,7 +2821,7 @@ function renderRecipe(recipe) {
         <span class="recipe__info-text">servings</span>
 
         <div class="recipe__info-buttons">
-          <button class="btn--tiny btn--increase-servings">
+          <button class="btn--tiny btn--decrease-servings">
             <svg>
               <use href="${(0, _iconsSvgDefault.default)}#icon-minus-circle"></use>
             </svg>
@@ -2815,7 +2854,7 @@ function renderRecipe(recipe) {
               <svg class="recipe__icon">
                 <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
               </svg>
-              <div class="recipe__quantity">${el.quantity}</div>
+              <div class="recipe__quantity">${formatQuantity(el.quantity)}</div>
               <div class="recipe__description">
                 <span class="recipe__unit">${el.unit}</span>
                 ${el.description}

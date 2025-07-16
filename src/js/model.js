@@ -35,6 +35,21 @@ async function getRecipe(id) {
     }
 }
 
+// Update servings and recalculate ingredient quantities
+function updateServings(newServings) {
+    const oldServings = state.recipe.servings;
+    
+    // Update ingredients quantities
+    state.recipe.ingredients.forEach(ing => {
+        if (ing.quantity) {
+            ing.quantity = (ing.quantity * newServings) / oldServings;
+        }
+    });
+    
+    // Update servings count
+    state.recipe.servings = newServings;
+}
+
 // Pagination helper functions
 function getSearchResultsPage(page = state.search.page) {
     const start = (page - 1) * state.search.resultsPerPage;
@@ -47,4 +62,4 @@ function getNumPages() {
     return Math.ceil(state.search.results.length / state.search.resultsPerPage);
 }
 
-export { state, getRecipes, getRecipe, getSearchResultsPage, getNumPages };
+export { state, getRecipes, getRecipe, getSearchResultsPage, getNumPages, updateServings };

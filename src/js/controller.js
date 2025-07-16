@@ -16,7 +16,7 @@ searchForm.addEventListener('submit', async function (e) {
   e.preventDefault();
   const dishName = view.getSearchQuery();
   view.renderSpinner(view.results);
-  
+
   try {
     await model.getRecipes(dishName);
     // Reset to page 1 for new search
@@ -31,17 +31,22 @@ searchForm.addEventListener('submit', async function (e) {
 function renderSearchResults() {
   const results = model.getSearchResultsPage();
   const numPages = model.getNumPages();
-  
+
   console.log('Rendering search results:', results.length, 'results');
-  console.log('Current page:', model.state.search.page, 'Total pages:', numPages);
-  
+  console.log(
+    'Current page:',
+    model.state.search.page,
+    'Total pages:',
+    numPages
+  );
+
   view.renderSearchResults(results);
   view.renderPagination(model.state.search.page, numPages);
 }
 
 async function renderRecipe(id) {
   view.renderSpinner(view.recipeContainer);
-  
+
   try {
     await model.getRecipe(id);
     view.renderRecipe(model.state.recipe);
@@ -93,16 +98,37 @@ document.addEventListener('click', function (e) {
     allRecipes.push(model.state.recipe);
     sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
     console.log('Calling displayBookmarkmsg...'); // Add this debug line
-    view.displayBookmarkmsg("Bookmark Added Successfully!");
-  }
-  else{
-    view.displayBookmarkmsg("removing bookmark");
-    allRecipes=allRecipes.filter(r=>r.id!==model.state.recipe.id)
+    view.displayBookmarkmsg('Bookmark Added Successfully!');
+  } else {
+    view.displayBookmarkmsg('removing bookmark');
+    allRecipes = allRecipes.filter(r => r.id !== model.state.recipe.id);
     sessionStorage.setItem('recipes', JSON.stringify(allRecipes));
   }
   console.log(allRecipes);
 });
 
+// Servings adjustment event handler
+document.addEventListener('click', function (e) {
+  const increaseBtn = e.target.closest('.btn--increase-servings');
+  const decreaseBtn = e.target.closest('.btn--decrease-servings');
+
+  if (!increaseBtn && !decreaseBtn) return;
+
+  const currentServings = model.state.recipe.servings;
+  let newServings;
+
+  if (decreaseBtn) {
+    newServings = currentServings > 1 ? currentServings - 1 : 1;
+  } else if (increaseBtn) {
+    newServings = currentServings + 1;
+  }
+
+  // Update servings in model
+  model.updateServings(newServings);
+
+  // Re-render recipe with updated quantities
+  view.renderRecipe(model.state.recipe);
+});
 
 ['hashchange', 'load'].forEach(ev =>
   window.addEventListener(ev, function () {
@@ -111,13 +137,12 @@ document.addEventListener('click', function (e) {
     renderRecipe(id);
   })
 );
-document.addEventListener('click',function(e){
-  
-  const btn=e.target.closest('.nav__btn--bookmarks')
-  console.log(btn)
-  if(!btn) return;
-  const recipe=JSON.parse(sessionStorage.getItem('recipes'))
-  console.log(recipe)
-  model.state.search.results=recipe
-  renderSearchResults()
-})
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.nav__btn--bookmarks');
+  console.log(btn);
+  if (!btn) return;
+  const recipe = JSON.parse(sessionStorage.getItem('recipes'));
+  console.log(recipe);
+  model.state.search.results = recipe;
+  renderSearchResults();
+});
